@@ -77,6 +77,11 @@ jobs:
                     -   php-version: '8.0'
                         symfony-version: '^5.0'
 
+                    # Test against upcoming Symfony 5.4
+                    -   php-version: '8.0'
+                        composer-allow-dev: true
+                        symfony-version: '5.4.x-dev as 5.4.0'
+
         steps:
             -   name: 'Checkout code'
                 uses: actions/checkout@v2
@@ -93,6 +98,10 @@ jobs:
                 run: |
                     php -r 'foreach (get_loaded_extensions() as $extension) echo $extension . " " . phpversion($extension) . PHP_EOL;'
                     php -i
+
+            -   name: "Composer allow dev dependencies"
+                if: ${{ matrix.composer-allow-dev }}
+                run: composer config minimum-stability dev && composer config prefer-stable true
 
             -   name: "Require Symfony version"
                 if: ${{ matrix.symfony-version != 'lowest' }}
@@ -146,6 +155,18 @@ jobs:
                         symfony-version: '~5.3.0'
                         app-config: 'authenticators'
 
+                    # Test against upcoming Symfony 5.4
+                    -   php-version: '8.0'
+                        composer-allow-dev: true
+                        symfony-version: '5.4.x-dev as 5.4.0'
+                        app-config: 'default'
+
+                    # Test against upcoming Symfony 5.4, AUTHENTICATORS configuration
+                    -   php-version: '8.0'
+                        composer-allow-dev: true
+                        symfony-version: '5.4.x-dev as 5.4.0'
+                        app-config: 'authenticators'
+
         steps:
             -   name: 'Checkout code'
                 uses: actions/checkout@v2
@@ -162,6 +183,10 @@ jobs:
                 run: |
                     php -r 'foreach (get_loaded_extensions() as $extension) echo $extension . " " . phpversion($extension) . PHP_EOL;'
                     php -i
+
+            -   name: "Composer allow dev dependencies"
+                if: ${{ matrix.composer-allow-dev }}
+                run: composer config minimum-stability dev --working-dir=app && composer config prefer-stable true --working-dir=app
 
             -   name: "Require Symfony version"
                 if: ${{ matrix.symfony-version != 'lowest' }}
