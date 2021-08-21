@@ -66,16 +66,9 @@ jobs:
                 include:
                     # Lowest possible configuration
                     -   php-version: '7.2.5'
+                        composer-allow-dev: true
                         dependency-versions: 'lowest'
-                        symfony-version: 'lowest'
-
-                    # Test against latest Symfony 4.4
-                    -   php-version: '8.0'
-                        symfony-version: '^4.4'
-
-                    # Test against latest Symfony 5
-                    -   php-version: '8.0'
-                        symfony-version: '^5.0'
+                        symfony-version: '5.4.x-dev as 5.4.0'
 
                     # Test against upcoming Symfony 5.4
                     -   php-version: '8.0'
@@ -145,24 +138,10 @@ jobs:
                 include:
                     # DEFAULT configuration (old security system)
 
-                    # Symfony 4.4 on minimum PHP version
+                    # Minimum PHP version
                     -   php-version: '7.2.5'
-                        symfony-version: '^4.4'
-                        app-config: 'default'
-
-                    # Latest Symfony 4.4
-                    -   php-version: '8.0'
-                        symfony-version: '^4.4'
-                        app-config: 'default'
-
-                    # Latest Symfony 5
-                    -   php-version: '8.0'
-                        symfony-version: '^5.0'
-                        app-config: 'default'
-
-                    # AUTHENTICATORS configuration (experimental security system)
-                    -   php-version: '8.0'
-                        symfony-version: '~5.3.0'
+                        composer-allow-dev: true
+                        symfony-version: '5.4.x-dev as 5.4.0'
                         app-config: 'authenticators'
 
                     # Test against upcoming Symfony 5.4
@@ -177,13 +156,7 @@ jobs:
                         symfony-version: '6.0.x-dev as 5.4.0'  # Convincing Symfony dependants that "everything is fine"
                         app-config: 'authenticators'
 
-                    # Latest Symfony 5 + PHP 8.1
-                    -   php-version: '8.1'
-                        composer-allow-dev: true
-                        symfony-version: '^5.0'
-                        app-config: 'default'
-
-                    # AUTHENTICATORS configuration (experimental security system) + PHP 8.1
+                    # PHP 8.1
                     -   php-version: '8.1'
                         composer-allow-dev: true
                         symfony-version: '~5.3.0'
