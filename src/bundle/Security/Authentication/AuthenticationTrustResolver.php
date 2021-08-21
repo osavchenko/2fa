@@ -38,6 +38,12 @@ class AuthenticationTrustResolver implements AuthenticationTrustResolverInterfac
         return !$this->isTwoFactorToken($token) && $this->decoratedTrustResolver->isFullFledged($token);
     }
 
+    // Compatibility with Symfony >= 6.0
+    public function isAuthenticated(TokenInterface $token = null): bool
+    {
+        return $this->decoratedTrustResolver->isAuthenticated($token);
+    }
+
     private function isTwoFactorToken(?TokenInterface $token): bool
     {
         return $token instanceof TwoFactorTokenInterface;
