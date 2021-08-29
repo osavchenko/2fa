@@ -80,11 +80,6 @@ jobs:
                         composer-allow-dev: true
                         symfony-version: '6.0.x-dev as 5.4.0'  # Convincing Symfony dependants that "everything is fine"
 
-                    # Test against latest Symfony 5 + PHP 8.1
-                    -   php-version: '8.1'
-                        composer-allow-dev: true
-                        symfony-version: '^5.0'
-
         steps:
             -   name: 'Checkout code'
                 uses: actions/checkout@v2
@@ -156,11 +151,6 @@ jobs:
                         symfony-version: '6.0.x-dev as 5.4.0'  # Convincing Symfony dependants that "everything is fine"
                         app-config: 'authenticators'
 
-                    # PHP 8.1
-                    -   php-version: '8.1'
-                        composer-allow-dev: true
-                        symfony-version: '~5.3.0'
-                        app-config: 'authenticators'
         steps:
             -   name: 'Checkout code'
                 uses: actions/checkout@v2
