@@ -45,8 +45,8 @@ class AuthenticationTrustResolverTest extends TestCase
     {
         $this->decoratedTrustResolver
             ->expects($this->once())
-            ->method('isAnonymous')
-            ->willReturn($returnedResult);
+            ->method('isAuthenticated')
+            ->willReturn(!$returnedResult);
 
         $returnValue = $this->trustResolver->isAnonymous($this->createMock(TokenInterface::class));
         $this->assertEquals($returnedResult, $returnValue);

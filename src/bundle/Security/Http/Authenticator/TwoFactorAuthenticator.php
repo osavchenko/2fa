@@ -14,7 +14,6 @@ use Scheb\TwoFactorBundle\Security\Http\Authenticator\Passport\TwoFactorPassport
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvents;
 use Scheb\TwoFactorBundle\Security\TwoFactor\TwoFactorFirewallConfig;
-use Scheb\TwoFactorBundle\Security\UsernameHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -27,6 +26,7 @@ use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -95,7 +95,7 @@ class TwoFactorAuthenticator implements AuthenticatorInterface, InteractiveAuthe
         return $this->twoFactorFirewallConfig->isCheckPathRequest($request);
     }
 
-    public function authenticate(Request $request): PassportInterface
+    public function authenticate(Request $request): Passport
     {
         // When the firewall is lazy, the token is not initialized in the "supports" stage, so this check does only work
         // within the "authenticate" stage.
@@ -131,7 +131,17 @@ class TwoFactorAuthenticator implements AuthenticatorInterface, InteractiveAuthe
         return $passport;
     }
 
+    /**
+     * Compatibility with Symfony < 6.0.
+     *
+     * @deprecated Use createToken() instead
+     */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
+    {
+        return $this->createToken($passport, $firewallName);
+    }
+
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
     {
         /** @var TwoFactorPassport $passport */
         $twoFactorToken = $passport->getTwoFactorToken();
@@ -153,7 +163,7 @@ class TwoFactorAuthenticator implements AuthenticatorInterface, InteractiveAuthe
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $this->logger->info('User has been two-factor authenticated successfully.', ['username' => UsernameHelper::getTokenUsername($token)]);
+        $this->logger->info('User has been two-factor authenticated successfully.', ['username' => $token->getUser()?->getUserIdentifier()]);
         $this->dispatchTwoFactorAuthenticationEvent(TwoFactorAuthenticationEvents::SUCCESS, $request, $token);
 
         // When it's still a TwoFactorTokenInterface, keep showing the auth form

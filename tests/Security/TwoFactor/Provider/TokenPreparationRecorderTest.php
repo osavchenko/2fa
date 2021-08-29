@@ -48,7 +48,7 @@ class TokenPreparationRecorderTest extends TestCase
         $token = $this->createMock(TwoFactorTokenInterface::class);
         $token
             ->expects($this->any())
-            ->method('getProviderKey')
+            ->method('getFirewallName')
             ->willReturn(self::FIREWALL_NAME);
 
         return $token;

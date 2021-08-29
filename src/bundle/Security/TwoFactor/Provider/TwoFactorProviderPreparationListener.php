@@ -10,7 +10,6 @@ use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -114,15 +113,8 @@ class TwoFactorProviderPreparationListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        // Compatibility for Symfony >= 5.3
-        if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            if (!$event->isMainRequest()) {
-                return;
-            }
-        } else {
-            if (!$event->isMasterRequest()) {
-                return;
-            }
+        if (!$event->isMainRequest()) {
+            return;
         }
 
         // Unset the token from context. This is important for environments where this instance of the class is reused
@@ -139,7 +131,7 @@ class TwoFactorProviderPreparationListener implements EventSubscriberInterface
             return;
         }
 
-        $firewallName = $twoFactorToken->getProviderKey(true);
+        $firewallName = $twoFactorToken->getFirewallName();
 
         if ($this->preparationRecorder->isTwoFactorProviderPrepared($firewallName, $providerName)) {
             $this->logger->info(sprintf('Two-factor provider "%s" was already prepared.', $providerName));
@@ -155,10 +147,10 @@ class TwoFactorProviderPreparationListener implements EventSubscriberInterface
 
     private function supports(TokenInterface $token): bool
     {
-        return $token instanceof TwoFactorTokenInterface && $token->getProviderKey(true) === $this->firewallName;
+        return $token instanceof TwoFactorTokenInterface && $token->getFirewallName() === $this->firewallName;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             AuthenticationEvents::AUTHENTICATION_SUCCESS => ['onLogin', self::AUTHENTICATION_SUCCESS_LISTENER_PRIORITY],

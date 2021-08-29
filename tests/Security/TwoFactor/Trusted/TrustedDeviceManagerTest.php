@@ -32,7 +32,7 @@ class TrustedDeviceManagerTest extends TestCase
     {
         $userMock
             ->expects($this->any())
-            ->method('getUsername')
+            ->method('getUserIdentifier')
             ->willReturn($username);
     }
 

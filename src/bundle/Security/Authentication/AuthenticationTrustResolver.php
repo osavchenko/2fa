@@ -23,9 +23,17 @@ class AuthenticationTrustResolver implements AuthenticationTrustResolverInterfac
         $this->decoratedTrustResolver = $decoratedTrustResolver;
     }
 
+    // Compatibility with Symfony < 6.0
     public function isAnonymous(TokenInterface $token = null): bool
     {
-        return $this->decoratedTrustResolver->isAnonymous($token);
+        if (method_exists($this->decoratedTrustResolver, 'isAnonymous')) {
+            return $this->decoratedTrustResolver->isAnonymous($token);
+        }
+        if (method_exists($this->decoratedTrustResolver, 'isAuthenticated')) {
+            return !$this->decoratedTrustResolver->isAuthenticated($token);
+        }
+
+        throw new \RuntimeException('Neither "isAnonymous" nor "isAuthenticated" declared on the decorated AuthenticationTrustResolverInterface');
     }
 
     public function isRememberMe(TokenInterface $token = null): bool
@@ -38,7 +46,6 @@ class AuthenticationTrustResolver implements AuthenticationTrustResolverInterfac
         return !$this->isTwoFactorToken($token) && $this->decoratedTrustResolver->isFullFledged($token);
     }
 
-    // Compatibility with Symfony >= 6.0
     public function isAuthenticated(TokenInterface $token = null): bool
     {
         return $this->decoratedTrustResolver->isAuthenticated($token);

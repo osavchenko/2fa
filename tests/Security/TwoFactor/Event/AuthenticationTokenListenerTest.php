@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Scheb\TwoFactorBundle\Tests\Security\TwoFactor\Event;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use Scheb\TwoFactorBundle\Security\Authentication\Provider\AuthenticationProviderDecorator;
 use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Scheb\TwoFactorBundle\Security\Http\Authenticator\TwoFactorAuthenticator;
 use Scheb\TwoFactorBundle\Security\TwoFactor\AuthenticationContextFactoryInterface;
@@ -48,15 +47,9 @@ class AuthenticationTokenListenerTest extends TestCase
         $this->authenticationContextFactory = $this->createMock(AuthenticationContextFactoryInterface::class);
 
         $this->requestStack = $this->createMock(RequestStack::class);
-        // Compatibility for Symfony >= 5.3
-        if (method_exists(RequestStack::class, 'getMainRequest')) {
-            $method = 'getMainRequest';
-        } else {
-            $method = 'getMasterRequest';
-        }
         $this->requestStack
             ->expects($this->any())
-            ->method($method)
+            ->method('getMainRequest')
             ->willReturn($this->createMock(Request::class));
 
         $this->listener = new AuthenticationTokenListener(
