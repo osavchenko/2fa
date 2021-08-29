@@ -65,10 +65,10 @@ jobs:
             matrix:
                 include:
                     # Lowest possible configuration
-                    -   php-version: '8.0'
-                        composer-allow-dev: true
-                        dependency-versions: 'lowest'
-                        symfony-version: '5.4.x-dev as 5.4.0'
+#                    -   php-version: '8.0'
+#                        composer-allow-dev: true
+#                        dependency-versions: 'lowest'
+#                        symfony-version: '5.4.x-dev as 5.4.0'
 
                     # Test against upcoming Symfony 5.4
                     -   php-version: '8.0'
@@ -139,10 +139,10 @@ jobs:
                     # DEFAULT configuration (old security system)
 
                     # Minimum PHP version
-                    -   php-version: '8.0'
-                        composer-allow-dev: true
-                        symfony-version: '5.4.x-dev as 5.4.0'
-                        app-config: 'authenticators'
+#                    -   php-version: '8.0'
+#                        composer-allow-dev: true
+#                        symfony-version: '5.4.x-dev as 5.4.0'
+#                        app-config: 'authenticators'
 
                     # Test against upcoming Symfony 5.4
                     -   php-version: '8.0'
